@@ -13,6 +13,8 @@ void menu() {
 								 "2. Mostrar DFA.\n" <<
 								 "3. Identificar estados de muerte\n" <<
 								 "4. Analizar cadena.\n" <<
+								 "5. Minimizar DFA.\n" <<
+								 "6. Exportar DFA.\n" <<
 								 "0. Salir del programa\n" <<
 								 "\n" <<
 								 "Introduce una opción: ";
@@ -54,16 +56,36 @@ void menu() {
 				break;
 			}
 
-		case 4: {
-			if (dfaIntroducido) {
-				std::string cadena;
-				std::cout << "Introduce una cadena a analizar: "; std::cin >> cadena;
-				dfa.analizarCadena(cadena);
-			} else {
-				std::cout << "Debes introducir un DFA primero.\n";
+			case 4: {
+				if (dfaIntroducido) {
+					std::string cadena;
+					std::cout << "Introduce una cadena a analizar: "; std::cin >> cadena;
+					dfa.analizarCadena(cadena);
+				} else {
+					std::cout << "Debes introducir un DFA primero.\n";
+				}
+				break;
 			}
-			break;
-		}
+
+			case 5: {
+				if (dfaIntroducido) {
+					dfa.minimizarDFA();
+				} else {
+					std::cout << "Debes introducir un DFA primero.\n";
+				}
+				break;
+			}
+
+			case 6: {
+				if (dfaIntroducido) {
+					std::string ruta;
+					std::cout << "Nombre del fichero a exportar: "; std::cin >> ruta;
+					dfa.exportarDFA(ruta);
+				} else {
+					std::cout << "Debes introducir un DFA primero.\n";
+				}
+				break;
+			}
 
 			default: {
 				std::cout << "Opción incorrecta o aún no implementada.\n";

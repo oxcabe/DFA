@@ -2,12 +2,16 @@
 
 namespace CyA {
 
-void Estado::addTransicion(std::string& simbolo, unsigned int destino) {
+void Estado::addTransicion(const std::string& simbolo, unsigned int destino) {
   transiciones_.insert(Transicion(simbolo, destino));
 }
 
 bool Estado::esEstadoDeAceptacion() const {
   return aceptacion_;
+}
+
+void Estado::setEstadoDeAceptacion(bool aceptacion) {
+  aceptacion_ = aceptacion;
 }
 
 unsigned int Estado::getId() const {
@@ -27,10 +31,14 @@ bool Estado::operator<(const Estado& estado) const {
   return id_ < estado.id_;
 }
 
+bool Estado::operator==(const Estado& estado) const {
+  return id_ == estado.id_;
+}
+
 void Estado::imprimir(std::ostream& salida) const {
-  std::cout << id_ << ' ' << aceptacion_ << ' ' << transiciones_.size() << ' ';
+  salida << id_ << ' ' << aceptacion_ << ' ' << transiciones_.size() << ' ';
   for (auto& transicion : transiciones_) {
-    std::cout << transicion.first << ' ' << transicion.second << ' ';
+    salida << transicion.first << ' ' << transicion.second << ' ';
   }
 }
 

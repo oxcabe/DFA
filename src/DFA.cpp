@@ -32,7 +32,7 @@ void DFA::leerFichero(std::string& rutaFichero) {
         fichero >> aceptacion;
         fichero >> numTransiciones;
 
-        Estado estado(id, aceptacion, numTransiciones);
+        Estado estado(id, aceptacion);
         std::set<std::string> alfabeto;
 
         for (unsigned int j = 0; j < numTransiciones; ++j) {
@@ -44,6 +44,7 @@ void DFA::leerFichero(std::string& rutaFichero) {
 
           if (!alfabeto.count(simbolo)) {
             alfabeto.insert(simbolo);
+            alfabeto_.insert(simbolo);
             estado.addTransicion(simbolo, destino);
           } else {
             throw 3;
@@ -112,18 +113,191 @@ void DFA::analizarCadena(std::string& cadena) {
 
 }
 
+void DFA::minimizarDFA() {
+  std::set<Estado> estadosAceptacion, estadosNoAceptacion;
+  Particion particion, particionVieja;
+  unsigned int contador = 0;
+
+  for (auto& estado : estados_) {
+    if (estado.esEstadoDeAceptacion()) {
+      estadosAceptacion.insert(estado);
+    } else {
+      estadosNoAceptacion.insert(estado);
+    }
+  }
+
+  particion.insert(estadosAceptacion);
+  particion.insert(estadosNoAceptacion);
+
+  do {
+
+    particionVieja = particion;
+    particion = crearNuevaParticion(particionVieja);
+
+    for (auto& conjunto : particion) {
+      if (conjunto.empty()) {
+        particion.erase(conjunto);
+      }
+    }
+
+    std::cout << 'P' << contador << ": " << particionVieja << '\n';
+    ++contador;
+
+  } while (particionVieja != particion);
+
+  std::cout << "El DFA mínimo tiene " << particion.size() << " estados.\n";
+
+  char opcion;
+  std::cout << "\nSustituir DFA en memoria por minimizado? (S/n): ";
+  std::cin >> opcion;
+
+  if (opcion == 'S' || opcion == 's') {
+    construirDFA(particion);
+  } else if (opcion != 'N' && opcion != 'n') {
+    std::cout << "Opcion invalida.\n";
+  }
+
+}
+
+void DFA::exportarDFA(std::string& ruta) {
+  std::ofstream fichero(ruta);
+
+  fichero << (*this);
+
+  fichero.close();
+}
+
 void DFA::imprimir(std::ostream& salida) const {
-  std::cout << estados_.size() << '\n' <<
+  salida << estados_.size() << '\n' <<
                arranque_ << '\n';
 
   for (auto& estado : estados_) {
-    std::cout << estado << '\n';
+    salida << estado << '\n';
   }
+}
+
+// Private
+
+Particion DFA::crearNuevaParticion(Particion& particion) {
+  Particion helper;
+
+  for (auto& conjunto : particion) {
+
+    Particion conjuntoEstadosDescomp = descomponerConjuntoEstados(conjunto, particion);
+    helper = unir(helper, conjuntoEstadosDescomp);
+
+  }
+
+  return helper;
+
+}
+
+Particion DFA::descomponerConjuntoEstados(const std::set<Estado>& estados, Particion& particion) {
+
+  Particion capaActual = { estados };
+
+  for (auto& simbolo : alfabeto_) {
+    Particion capaNueva;
+    // std::cout << "Con el simbolo \'" << simbolo << "\':\n";
+    for (auto& conjuntoEstados : capaActual) {
+      Particion capaActualPrima = particionarConjuntoPorSimbolo(conjuntoEstados, simbolo, particion);
+      capaNueva = unir(capaNueva, capaActualPrima);
+    }
+    capaActual = capaNueva;
+  }
+
+  return capaActual;
+
+}
+
+Particion DFA::particionarConjuntoPorSimbolo(const std::set<Estado>& conjuntoEstados, const std::string& simbolo, Particion& particion) {
+
+  Particion T, p;
+  std::set<Estado> helper;
+  //nextTransicion(cadena).getId();
+  for (auto& H : particion) {
+    for (auto& q : conjuntoEstados) {
+      if (H.count((*std::next(estados_.begin(), q.nextTransicion(simbolo))))) {
+        helper.insert(q);
+
+      }
+    }
+
+    p.insert(helper);
+    T = unir(T, p);
+    p.clear();
+    helper.clear();
+  }
+
+  return T;
+
+}
+
+void DFA::construirDFA(Particion& particion) {
+
+  estados_.clear();
+
+  unsigned int contador = 0;
+  for (auto& conjunto : particion) {
+
+    Estado estadoMin(contador);
+
+    for (auto& estado : conjunto) {
+      if (estado.esEstadoDeAceptacion()) {
+        estadoMin.setEstadoDeAceptacion(true);
+      }
+      for (auto& simbolo : alfabeto_) {
+        estadoMin.addTransicion(simbolo,
+          destinoTransicionMinimizada(estado.nextTransicion(simbolo), particion));
+      }
+    }
+    estados_.insert(estadoMin);
+    ++contador;
+  }
+
+}
+
+Particion DFA::unir(Particion& p1, Particion& p2) {
+
+  Particion helper = p1;
+
+  for (auto& item : p2) {
+    helper.insert(item);
+  }
+
+  return helper;
+
+}
+
+unsigned int DFA::destinoTransicionMinimizada(unsigned int idEstado, Particion& particion) {
+  unsigned int contador = 0;
+  for (auto& conjunto : particion) {
+    for (auto& estado : conjunto) {
+      if (idEstado == estado.getId()) {
+        return contador;
+      }
+    }
+    ++contador;
+  }
+  return 0;
 }
 
 }
 
 std::ostream& operator<<(std::ostream& salida, const CyA::DFA& dfa) {
   dfa.imprimir(salida);
+  return salida;
+}
+
+std::ostream& operator<<(std::ostream& salida, const CyA::Particion& particion) {
+  std::cout << "{ ";
+  for (auto& conjunto : particion) {
+    std::cout << "{ ";
+    for (auto& estado : conjunto) {
+      salida << estado.getId() << " ";
+    }
+    std::cout << "} ";
+  }
+  salida << "}\n";
   return salida;
 }
