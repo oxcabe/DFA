@@ -10,6 +10,7 @@ namespace CyA {
 
 typedef std::pair<std::string, unsigned int> Transicion;
 
+
 class Estado {
 private:
   unsigned int id_;

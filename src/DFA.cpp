@@ -10,6 +10,8 @@ DFA::DFA(std::string& rutaFichero) {
 }
 
 void DFA::leerFichero(std::string& rutaFichero) {
+  estados_.clear();
+  alfabeto_.clear();
   std::ifstream fichero;
 
   try {
@@ -168,6 +170,7 @@ void DFA::exportarDFA(std::string& ruta) {
 }
 
 void DFA::imprimir(std::ostream& salida) const {
+
   salida << estados_.size() << '\n' <<
                arranque_ << '\n';
 
@@ -198,7 +201,7 @@ Particion DFA::descomponerConjuntoEstados(const std::set<Estado>& estados, Parti
 
   for (auto& simbolo : alfabeto_) {
     Particion capaNueva;
-    // std::cout << "Con el simbolo \'" << simbolo << "\':\n";
+
     for (auto& conjuntoEstados : capaActual) {
       Particion capaActualPrima = particionarConjuntoPorSimbolo(conjuntoEstados, simbolo, particion);
       capaNueva = unir(capaNueva, capaActualPrima);
@@ -214,7 +217,6 @@ Particion DFA::particionarConjuntoPorSimbolo(const std::set<Estado>& conjuntoEst
 
   Particion T, p;
   std::set<Estado> helper;
-  //nextTransicion(cadena).getId();
   for (auto& H : particion) {
     for (auto& q : conjuntoEstados) {
       if (H.count((*std::next(estados_.begin(), q.nextTransicion(simbolo))))) {
