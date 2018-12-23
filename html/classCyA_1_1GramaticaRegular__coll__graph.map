@@ -1,6 +1,0 @@
-<map id="CyA::GramaticaRegular" name="CyA::GramaticaRegular">
-<area shape="rect" id="node8" href="$classCyA_1_1SimboloNoTerminal.html" title="{CyA::SimboloNoTerminal\n|&#45; simbolo_\l&#45; indice_\l|+ SimboloNoTerminal()\l+ SimboloNoTerminal()\l+ ~SimboloNoTerminal()\l+ getSimbolo()\l+ insertRegla()\l+ operator\&lt;()\l+ operator==()\l+ imprimir()\l}" alt="" coords="151,440,321,635"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="200,160,280,237"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="177,5,303,97"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="5,160,104,237"/>
-</map>

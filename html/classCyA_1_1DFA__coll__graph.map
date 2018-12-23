@@ -1,6 +1,0 @@
-<map id="CyA::DFA" name="CyA::DFA">
-<area shape="rect" id="node3" title="STL class. " alt="" coords="29,160,109,237"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="5,5,132,97"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="198,160,297,237"/>
-<area shape="rect" id="node8" href="$classCyA_1_1Estado.html" title="{CyA::Estado\n|&#45; id_\l&#45; aceptacion_\l|+ Estado()\l+ ~Estado()\l+ addTransicion()\l+ esEstadoDeAceptacion()\l+ setEstadoDeAceptacion()\l+ getId()\l+ nextTransicion()\l+ operator\&lt;()\l+ operator==()\l+ imprimir()\l}" alt="" coords="288,440,471,664"/>
-</map>
