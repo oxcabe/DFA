@@ -9,6 +9,10 @@ DFA::DFA(std::string& rutaFichero) {
 
 }
 
+std::set<std::string> DFA::getAlfabeto() {
+  return alfabeto_;
+}
+
 void DFA::leerFichero(std::string& rutaFichero) {
   estados_.clear();
   alfabeto_.clear();
@@ -161,8 +165,8 @@ void DFA::minimizarDFA() {
 
 }
 
-void DFA::exportarDFA(std::string& ruta) {
-  std::ofstream fichero(ruta);
+void DFA::exportarDFA(std::string& rutaFichero) {
+  std::ofstream fichero(rutaFichero);
 
   fichero << (*this);
 
@@ -292,13 +296,13 @@ std::ostream& operator<<(std::ostream& salida, const CyA::DFA& dfa) {
 }
 
 std::ostream& operator<<(std::ostream& salida, const CyA::Particion& particion) {
-  std::cout << "{ ";
+  salida << "{ ";
   for (auto& conjunto : particion) {
-    std::cout << "{ ";
+    salida << "{ ";
     for (auto& estado : conjunto) {
       salida << estado.getId() << " ";
     }
-    std::cout << "} ";
+    salida << "} ";
   }
   salida << "}\n";
   return salida;

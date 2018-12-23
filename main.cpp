@@ -1,6 +1,16 @@
 #include <iostream>
 #include <string>
+#include <getopt.h>
 #include "include/DFA.h"
+#include "include/GramaticaRegular.h"
+
+void ayuda() {
+	std::cout << "Uso: dfa [-h|--help] [-i|--interactive] [-d|--dfa] automata.dfa [-g|--gramatica] gramatica.grammar\n" <<
+		"\t[-h]               Muestra este menu.\n" <<
+		"\t[-i|--interactive] Modo interactivo.\n" <<
+		"\t[-d|--dfa]         DFA a introducir.\n" <<
+		"\t[-g|--gramatica]   Gramática a introducir.\n";
+}
 
 void menu() {
 	unsigned int opcion;
@@ -96,6 +106,69 @@ void menu() {
 	} while (opcion != 0);
 }
 
+void procesarArgumentos(int argc, char* argv[]) {
+
+	bool mostrarAyuda = false, mostrarMenu = false;
+	std::string ficheroAutomata, ficheroGramatica;
+
+	const char* const opcionesCortas = "hid:g:";
+	const option opcionesLargas[] = {
+		{"help", no_argument, nullptr, 'h'},
+		{"interactive", no_argument, nullptr, 'i'},
+		{"dfa", required_argument, nullptr, 'd'},
+		{"gramatica", required_argument, nullptr, 'g'},
+		{nullptr, no_argument, nullptr, 0}
+	};
+
+	while (true) {
+		const auto opciones = getopt_long(argc, argv, opcionesCortas, opcionesLargas, nullptr);
+
+		if (opciones == -1) {
+			break;
+		}
+
+		switch (opciones) {
+			case 'i': {
+			 	mostrarMenu = true;
+				break;
+			}
+			case 'd': {
+				ficheroAutomata = std::string(optarg);
+				break;
+			}
+			case 'g': {
+				ficheroGramatica = std::string(optarg);
+				break;
+			}
+			case '?': {
+				std::cout << "Argumento inválido\n";
+			}
+			case 'h':
+			default: {
+				mostrarAyuda = true;
+				break;
+			}
+		}
+	}
+
+	// Implementar lógica de argumentos aquí
+	if (mostrarAyuda) {
+		ayuda();
+	} else {
+		if (!ficheroAutomata.empty() && !ficheroGramatica.empty()) {
+			CyA::DFA dfa(ficheroAutomata);
+			CyA::GramaticaRegular gramatica(dfa);
+
+			gramatica.exportarGramatica(ficheroGramatica);
+		} else {
+			if (mostrarMenu) {
+				menu();
+			}
+		}
+	}
+
+}
+
 int main(int argc, char* argv[]) {
-	menu();
+	procesarArgumentos(argc, argv);
 }

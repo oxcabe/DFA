@@ -49,6 +49,11 @@ public:
   DFA(std::string& rutaFichero);
   ~DFA() = default;
 
+
+  std::set<std::string> getAlfabeto();
+  unsigned int comprobarTransicion(unsigned int idEstado, std::string& simbolo);
+  bool esEstadoDeAceptacion(unsigned int idEstado);
+
   /** \brief Insertar DFA a partir de fichero
   * \param rutaFichero
   * Cadena con la ubicación del fichero a leer.
@@ -57,8 +62,11 @@ public:
   void mostrarEstadosDeMuerte();
   void analizarCadena(std::string& cadena);
   void minimizarDFA();
-  void exportarDFA(std::string& ruta);
+  void exportarDFA(std::string& rutaFichero);
 
+  operator std::set<Estado>() const { return estados_; }
+
+  unsigned int size();
   void imprimir(std::ostream& salida) const;
 
 };

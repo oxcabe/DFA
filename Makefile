@@ -7,3 +7,6 @@ MAIN=main.cpp
 
 all:
 	$(CC) $(FLAGS) -o $(BIN) $(wildcard $(INCLUDE)* $(SRC)* $(MAIN))
+
+docs:
+	doxygen
